@@ -25,16 +25,17 @@
               :label="$t('updatedAt')">
       </el-table-column>
       <el-table-column
-              width="100px"
+              width="200px"
               :label="$t('actions')">
         <template #default="scope">
           <el-button
                   v-if="hasEditBtn"
-                  type="text"
+                  type="primary"
+                  :link="true"
                   @click="handleEdit(scope.row)">{{ $t('edit') }}</el-button>
           <el-popconfirm v-if="hasDeleteBtn" :title="$t('confirmDelete')" @confirm="handleDelete(scope.$index, scope.row)">
             <template #reference>
-              <el-button type="text">{{ $t('delete') }}</el-button>
+              <el-button type="danger" :link="true">{{ $t('delete') }}</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -64,12 +65,12 @@
 <script setup>
 import CustomScrollDrawer from '@/components/Drawer/CustomScrollDrawer.vue'
 import { defineComponent, ref, watch, computed } from 'vue'
-import { useStore } from 'vuex'
 import { tableDefaultData, tableDataFormat } from '@/utils/table'
 import { getPermissionGroupList, editPermissionGroup, addPermissionGroup, deletePermissionGroup } from '@/api/permissionGroup'
 import notice from '@/utils/notice'
 import TableAction from '@/components/Table/TableAction.vue'
 import { Refresh, Plus} from "@element-plus/icons-vue"
+import { usePermissionStore } from "@/store/permission"
 
 const props = defineProps({
   modelValue: false,
@@ -78,7 +79,7 @@ const props = defineProps({
 const emit = defineEmits(["update:modelValue"])
 
 const drawer = ref(props.modelValue)
-const store = useStore()
+const permissionStore = usePermissionStore()
 const table = tableDefaultData()
 const dialogVisible = ref(false)
 const formRef = ref(null)
@@ -152,9 +153,9 @@ const handleDelete = (index, row) => {
   })
 }
 
-const hasAddBtn = computed(() => store.getters.hasPermission("permission-group.store"))
-const hasEditBtn = computed(() => store.getters.hasPermission("permission-group.update"))
-const hasDeleteBtn = computed(() => store.getters.hasPermission("permission-group.destroy"))
+const hasAddBtn = computed(() => permissionStore.hasPermission("permission-group.store"))
+const hasEditBtn = computed(() => permissionStore.hasPermission("permission-group.update"))
+const hasDeleteBtn = computed(() => permissionStore.hasPermission("permission-group.destroy"))
 const rules = {
   name: [
     { required: true },

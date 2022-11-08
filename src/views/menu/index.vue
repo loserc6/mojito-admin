@@ -58,11 +58,12 @@
         <template #default="scope">
           <el-button
                   v-if="hasUpdatePermission"
-                  type="text"
+                  type="primary"
+                  :link="true"
                   @click="handleEdit(scope.row)">{{ $t('edit') }}</el-button>
           <el-popconfirm v-if="hasDeletePermission" :title="$t('confirmDelete')" @confirm="handleDelete(scope.$index, scope.row)">
             <template #reference>
-              <el-button type="text">{{ $t('delete') }}</el-button>
+              <el-button type="danger" :link="true">{{ $t('delete') }}</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -75,16 +76,15 @@
 <script setup>
 import GuardSelect from '@/components/Select/GuardSelect.vue'
 import { getMenuList, deleteMenu } from '@/api/menu'
-import MenuCascader from '@/components/Cascader/MenuCascader.vue'
 import TableAction from '@/components/Table/TableAction.vue'
 import MenuFormDrawer from './MenuFormDrawer.vue'
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
 import { tableDefaultData } from '@/utils/table'
 import notice from '@/utils/notice'
+import { usePermissionStore } from "@/store/permission"
 
 const showFormDrawer = ref(false)
-const store = useStore()
+const permissionStore = usePermissionStore()
 const table = tableDefaultData()
 
 const requestData = () => {
@@ -117,9 +117,9 @@ const handleAdd = () => {
   formAction.value = 'add'
 }
 
-const hasAddPermission = computed(() => store.getters.hasPermission("menu.store"))
-const hasUpdatePermission = computed(() => store.getters.hasPermission("menu.update"))
-const hasDeletePermission = computed(() => store.getters.hasPermission("menu.destroy"))
+const hasAddPermission = computed(() => permissionStore.hasPermission("menu.store"))
+const hasUpdatePermission = computed(() => permissionStore.hasPermission("menu.update"))
+const hasDeletePermission = computed(() => permissionStore.hasPermission("menu.destroy"))
 const icon = computed(() => (name) => name)
 
 </script>

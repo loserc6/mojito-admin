@@ -60,15 +60,17 @@
         <template #default="scope">
           <el-button
                   v-if="hasEditPermission"
-                  type="text"
+                  type="primary"
+                  :link="true"
                   @click="handleEdit(scope.row)">{{ $t('edit') }}</el-button>
           <el-button
                   v-if="hasAssignRolePermission"
-                  type="text"
+                  type="primary"
+                  :link="true"
                   @click="handleAssignRole(scope.row)">{{ $t('assignRole') }}</el-button>
           <el-popconfirm v-if="hasDeletePermission" :title="$t('confirmDelete')" @confirm="handleDelete(scope.$index, scope.row)">
             <template #reference>
-              <el-button type="text">{{ $t('delete') }}</el-button>
+              <el-button type="danger" :link="true">{{ $t('delete') }}</el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -93,11 +95,11 @@ import UserAssignRole from '@/components/User/AssignRole.vue'
 import TableAction from '@/components/Table/TableAction.vue'
 import { ref, computed } from 'vue'
 import AdminUserFormDialog from './AdminUserFormDialog.vue'
-import { useStore } from 'vuex'
 import { tableDataFormat, tableDefaultData } from '@/utils/table'
 import notice from '@/utils/notice'
+import {usePermissionStore} from "@/store/permission";
 
-const store = useStore()
+const permissionStore = usePermissionStore()
 const addDialogVisible = ref(false)
 const editDialogVisible = ref(false)
 const table = tableDefaultData()
@@ -135,9 +137,9 @@ const handleAssignRole = (row) => {
   assignRole.value.dialogVisible = true
 }
 
-const hasAddPermission = computed(() => store.getters.hasPermission("admin-user.store"))
-const hasEditPermission = computed(() => store.getters.hasPermission("admin-user.update"))
-const hasDeletePermission = computed(() => store.getters.hasPermission("admin-user.destroy"))
-const hasAssignRolePermission = computed(() => store.getters.hasPermission("admin-user.assign-roles"))
+const hasAddPermission = computed(() => permissionStore.hasPermission("admin-user.store"))
+const hasEditPermission = computed(() => permissionStore.hasPermission("admin-user.update"))
+const hasDeletePermission = computed(() => permissionStore.hasPermission("admin-user.destroy"))
+const hasAssignRolePermission = computed(() => permissionStore.hasPermission("admin-user.assign-roles"))
 
 </script>
